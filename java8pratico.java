@@ -10,7 +10,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import java.util.Optional;
 
+
+import static java.util.stream.Collectors.*;
 
 class Usuario {
 	private String nome;
@@ -326,10 +329,47 @@ class Capitulo7{
 	
 		usuarios2.stream().filter(u -> u.getPontos() > 150).forEach(Usuario :: tornaModerador); //elementos filtrados tornam moderadores
 
-		usuarios2.forEach(System.out::println);						
+		usuarios2.forEach(System.out::println);
 
+		//List<Usuario> maisQue100 = new ArrayList<>(); //nova lista
+		/*
+		usuarios.stream()
+			.filter(u -> u.getPontos() > 100) //filtra
+			.forEach(u -> maisQue100.add(u)); //adiciona numa nova lista						
+		*/
+		
+			
+		/*usuarios.stream()
+			.filter(u -> u.getPontos() > 100)
+			.forEach(maisQue100::add);*/
 
-	
+		//adicionando os elementos filtrados numa nova lista
+		List<Usuario> maisQue100 = usuarios.stream()
+		.filter(u -> u.getPontos() > 100)
+		.collect(toList()); //toList método static da interface Collectors
+
+		//utilizando map: transformação na lista sem variaveis intermediárias
+		List<Integer> pontos = usuarios.stream()
+			.map(Usuario::getPontos)
+			.collect(toList());
+
+		pontos.forEach(System.out::println);
+
+		//retorna media s/ autoboxing
+		double pontuacaoMedia = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.average()
+			.getAsDouble();
+		
+		//uilizando Optional
+		 double media = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.average() //retorna OptionalDouble
+			.orElse(0.0); //se a lista for vazia, a media retorna é 0.0
+			//.orElseThrow(IllegalStateException::new); //lança uma exception: recebe Supplier
+			//.ifPresent(valor -> janela.atualiza(valor)); //se existe valor: recebe Consumer
+		
+			
 
 	}
 
