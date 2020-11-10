@@ -10,10 +10,111 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import java.util.function.IntBinaryOperator;
 import java.util.Optional;
+import java.util.Iterator;
 
 
 import static java.util.stream.Collectors.*;
+
+
+
+
+
+
+
+
+class Capitulo8{
+
+	public static void main(String [] args){
+
+		Usuario user1 = new Usuario("Paulo Silveira", 150);
+		Usuario user2 = new Usuario("Rodrigo Turini", 120);
+		Usuario user3 = new Usuario("Guilherme Silveira", 190);
+		
+		List<Usuario> usuarios = Arrays.asList(user1, user2, user3); //cria uma lista imutavel
+
+
+		List<Usuario> filtradosOrdenados = usuarios.stream() //pipeline de operações encadeadas. lazy: executa somente qdo necessário
+			//operacoes intermediarias
+			.filter(u -> u.getPontos() > 100) //filtra os usuarios com mais de 100 pontos - devolve um stream ainda nao filtrado mas marcado
+			.sorted(Comparator.comparing(Usuario::getNome)) //ordena pelo nome usando method reference - devolve um stream ainda nao ordenado mas marcado
+			//operacao terminal invocada: o stream agora é filtrado e ornado - pipeline será executado
+			.collect(Collectors.toList()); //coleta o stream p/ tranformar numa nova lista
+
+		Optional<Usuario> usuarioOptional = usuarios.stream()
+			.filter(u -> u.getPontos() > 100)
+			.findAny(); //retorna um optional. Operação terminal
+
+		usuarios.stream()
+			.filter(u -> u.getPontos() > 100)
+			.peek(System.out::println) //pedido p/ q o stream execute a tarefa toda vez q processar um elemento
+			.findAny(); 
+
+		usuarios.stream()
+			.sorted(Comparator.comparing(Usuario::getNome)) //método intermediário stateful. Podem precisar processar todo o stream mesmo q a operação termninal não demande isso.
+			.peek(System.out::println)
+			.findAny();
+
+		usuarios.forEach(System.out :: println);
+
+		System.out.println("\n\nFiltrados Ordenados");
+
+		filtradosOrdenados.forEach(System.out :: println);
+
+		//operações de redução: utilizam os elementos de um stream p/ retornar um vlr final
+		int total = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.sum(); //redução - todos trabalham c/ Optional menos sum() e count()
+
+		System.out.println("\n\nTotal de Pontos" + total);
+
+		//explicitar a operação de redução
+		int valorInicial = 0;
+		IntBinaryOperator operacao = (a,b) -> a + b;
+
+		int total2 = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.reduce(valorInicial, operacao);
+
+		System.out.println("\n\nTotal de Pontos" + total2);
+
+		int total3 = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.reduce(0, Integer::sum); //utilizando o method reference
+
+		//importante conhecer reduce p/ aplicar em operações q não existem em stream
+		int multiplicacao = usuarios.stream()
+			.mapToInt(Usuario::getPontos)
+			.reduce(1, (a,b) -> a * b);
+
+		//percorrer um stream utilizando Iterator - p/ modificar objetos dentro do stream
+		Iterator<Usuario> i = usuarios.stream().iterator();
+		
+		System.out.println("\npercorrendo stream com Iterator");
+		usuarios.stream().iterator()
+			.forEachRemaining(System.out::println);
+
+		usuarios.stream().iterator()
+			.forEachRemaining(Usuario :: tornaModerador);
+
+		System.out.println("\npercorrendo stream com Iterator");
+		usuarios.stream().iterator()
+			.forEachRemaining(System.out::println);
+
+		//testar predicados sem filtrar a lista
+		System.out.println("\nStream possui moderador: " + usuarios.stream()
+			.anyMatch(Usuario::isModerador));
+		
+
+		
+	}
+
+
+
+}
+
+
 
 class Usuario {
 	private String nome;
