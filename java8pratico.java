@@ -1,5 +1,9 @@
 import java.util.stream.*;
+import java.util.stream.IntStream; 
+import java.util.stream.Stream; 
+import java.lang.Math.*;
 import java.util.List;
+import java.util.Random;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.ArrayList;
@@ -8,17 +12,77 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.IntSupplier;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 import java.util.function.IntBinaryOperator;
 import java.util.Optional;
 import java.util.Iterator;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 
 import static java.util.stream.Collectors.*;
 
 
+class Capitulo10{
 
+	public static void main (String[] args){
+
+		//plus minus Months Years
+		LocalDate mesQueVem = LocalDate.now().plusMonths(1); //pega a data atual e soma 1 mês
+		String s1 = "mesQueVem: " + mesQueVem;
+			
+		
+
+		LocalTime agora = LocalTime.now();
+		String s2 = "agora: " + agora;
+
+		LocalDate hoje = LocalDate.now();
+		String s3 = "hoje: " + hoje;
+
+		LocalDateTime hojeAoMeioDia =  hoje.atTime(12,0);
+		String s4 = "hojeAoMeioDia:  " + hojeAoMeioDia;
+
+		String s5 = "hojeAgoraCom_atTime: " + hoje.atTime(agora);
+
+		ZonedDateTime zone = hojeAoMeioDia.atZone(ZoneId.of("America/Sao_Paulo"));
+
+
+		List<String> tempos = Arrays.asList(s1, s2, s3, s4, s5, 
+			"dataEspecificada: " +  LocalDate.of(2020,11,12) //of
+			, "alterando ano com with: " + LocalDate.now().withYear(1989) //with
+			, "pegando o ano: " + LocalDate.now().withYear(1989).getYear() //get
+			, "teste booleano com is : " + LocalDate.now().withYear(1989).isBefore(LocalDate.now()) //is
+			, "dia do mes : " + MonthDay.now().getDayOfMonth() //get
+			, "mes do ano : " + YearMonth.now().getMonth() 
+			, "enum de mes dezembro + 1  : " + Month.DECEMBER.plus(1)  
+			, "formatacao c/ ISO_LOCAL_TIME: " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME)
+			, "formatacao c/ ISO_LOCAL_DATE: " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+			, "formatacao c/ ofPattern: "  + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+			, " : "  
+
+			);
+
+
+
+//		List<LocalDate> periodos = Arrays.asList(mesQueVem, hoje); 
+
+//		List<LocalDateTime> duracoes = Arrays.asList( agora, hojeAoMeioDia); 
+
+		tempos.stream().forEach(System.out :: println);
+
+		//periodos.stream().forEach(System.out :: println);
+
+
+		//duracoes.stream().forEach(System.out :: println);
+
+
+
+	}
+
+
+}
 
 
 
@@ -105,13 +169,33 @@ class Capitulo8{
 		//testar predicados sem filtrar a lista
 		System.out.println("\nStream possui moderador: " + usuarios.stream()
 			.anyMatch(Usuario::isModerador));
-		
+
+		//stream infinito
+		Random random = new Random(0);
+		Supplier<Integer> supplier = () -> random.nextInt(); //regra p/ criar os obj dentro desse stream - lista "infinita de numeros aleatórios"
+		Stream<Integer> stream = Stream.generate(supplier); //lazy: só serão gerados a medida q serão necessários
+
+		//int valor = stream.sum(); nunca terminara de executar
+
+			
 
 		
 	}
 
 
 
+}
+
+
+class Fibonacci implements IntSupplier {
+	private int anterior = 0;
+	private int proximo = 1;
+
+	public int getAsInt() {
+		proximo = proximo + anterior;
+		anterior = proximo - anterior;
+		return anterior;
+	}
 }
 
 
