@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 
 import static java.util.stream.Collectors.*;
@@ -48,6 +49,9 @@ class Capitulo10{
 
 		ZonedDateTime zone = hojeAoMeioDia.atZone(ZoneId.of("America/Sao_Paulo"));
 
+		Period hojeAteNatalComPeriod = Period.between(LocalDate.of(2020,12,25), LocalDate.now());
+
+		Duration HoraDeIrEmboraAteAgora = Duration.between(LocalTime.now(), LocalTime.of(18,00));
 
 		List<String> tempos = Arrays.asList(s1, s2, s3, s4, s5, 
 			"dataEspecificada: " +  LocalDate.of(2020,11,12) //of
@@ -60,22 +64,23 @@ class Capitulo10{
 			, "formatacao c/ ISO_LOCAL_TIME: " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME)
 			, "formatacao c/ ISO_LOCAL_DATE: " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 			, "formatacao c/ ofPattern: "  + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-			, " : "  
-
+			//, " : " + LocalDate.of(2014, Month.FEBRUARY, 30)  DATETIME EXCEPTION
+			, "QTD DIAS : " + ChronoUnit.DAYS.between(LocalDate.of(2020,12,31), LocalDate.now()) //chronounit 
+			, "Period : "   + hojeAteNatalComPeriod.getYears() + " ano(s), " + hojeAteNatalComPeriod.getMonths() + " mes(es), " + hojeAteNatalComPeriod.getDays() + " dia(s)."
+			, "Duration : " + HoraDeIrEmboraAteAgora.getSeconds() + " segundo(s)."
+			, " : " 
+			, " : " 
+			, " : " 
+			, " : " 
+			, " : " 
+			, " : " 
 			);
 
 
 
-//		List<LocalDate> periodos = Arrays.asList(mesQueVem, hoje); 
-
-//		List<LocalDateTime> duracoes = Arrays.asList( agora, hojeAoMeioDia); 
 
 		tempos.stream().forEach(System.out :: println);
 
-		//periodos.stream().forEach(System.out :: println);
-
-
-		//duracoes.stream().forEach(System.out :: println);
 
 
 
